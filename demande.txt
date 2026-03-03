@@ -1,1 +1,8 @@
 socket TCP C++" ou "programmation réseau C++
+
+socket() - Crée un point de communication
+bind() - Associe le socket à un port (ex: 6667)
+listen() - Met le socket en mode écoute
+poll() - Surveille plusieurs sockets en même temps
+accept() - Accepte une nouvelle connexion client
+send()/recv() - Envoie/reçoit des données
