@@ -1,0 +1,62 @@
+graph TB
+    Start[ft_irc Project] --> YourPart[YOUR PART - Foundation]
+    Start --> FriendPart[FRIEND'S PART - Features]
+    
+    YourPart --> A1[1. Project Setup]
+    A1 --> A1a[Makefile with all rules]
+    A1 --> A1b[Project structure folders]
+    A1 --> A1c[Header files .hpp]
+    
+    YourPart --> A2[2. Core Server Infrastructure]
+    A2 --> A2a[main.cpp - Entry point]
+    A2 --> A2b[Server class with socket]
+    A2 --> A2c[poll implementation]
+    A2 --> A2d[Non-blocking I/O setup]
+    A2 --> A2e[Accept new clients]
+    
+    YourPart --> A3[3. Client Management]
+    A3 --> A3a[Client class]
+    A3 --> A3b[Connection handling]
+    A3 --> A3c[Buffer for partial data]
+    A3 --> A3d[Disconnect cleanup]
+    
+    YourPart --> A4[4. Basic Authentication]
+    A4 --> A4a[PASS command]
+    A4 --> A4b[NICK command]
+    A4 --> A4c[USER command]
+    A4 --> A4d[PING/PONG]
+    A4 --> A4e[QUIT command]
+    
+    FriendPart --> B1[5. Channel System]
+    B1 --> B1a[Channel class]
+    B1 --> B1b[JOIN command]
+    B1 --> B1c[PART command]
+    B1 --> B1d[Channel member list]
+    
+    FriendPart --> B2[6. Messaging]
+    B2 --> B2a[PRIVMSG to users]
+    B2 --> B2b[PRIVMSG to channels]
+    B2 --> B2c[Message broadcasting]
+    
+    FriendPart --> B3[7. Operator Commands]
+    B3 --> B3a[KICK command]
+    B3 --> B3b[INVITE command]
+    B3 --> B3c[TOPIC command]
+    
+    FriendPart --> B4[8. MODE Command]
+    B4 --> B4a[MODE +i invite-only]
+    B4 --> B4b[MODE +t topic restricted]
+    B4 --> B4c[MODE +k channel password]
+    B4 --> B4d[MODE +o operator privilege]
+    B4 --> B4e[MODE +l user limit]
+    
+    style YourPart fill:#4CAF50,stroke:#2E7D32,stroke-width:3px,color:#fff
+    style FriendPart fill:#2196F3,stroke:#1565C0,stroke-width:3px,color:#fff
+    style A1 fill:#81C784
+    style A2 fill:#81C784
+    style A3 fill:#81C784
+    style A4 fill:#81C784
+    style B1 fill:#64B5F6
+    style B2 fill:#64B5F6
+    style B3 fill:#64B5F6
+    style B4 fill:#64B5F6
