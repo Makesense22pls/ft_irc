@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <cerrno>
 #include <climits>
+#include "Server.hpp"
 
 bool isValidPort(const std::string &portStr, int &port)
 {
@@ -40,10 +41,17 @@ int main(int argc, char **argv)
 
 	std::cout << "Starting IRC Server on port " << port << std::endl;
 	
-	// TODO: Create and run Server instance
-	// Server server(port, password);
-	// server.init();
-	// server.run();
+	try
+	{
+		Server server(port, password);
+		server.init();
+		server.run();
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		return 1;
+	}
 
 	return 0;
 }
