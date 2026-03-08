@@ -40,5 +40,10 @@ int main(int argc, char **argv)
 
 	std::cout << "Starting IRC Server on port " << port << std::endl;
 	
+	// TODO: Create and run Server instance
+	// Server server(port, password);
+	// server.init();
+	// server.run();
+
 	return 0;
 }
