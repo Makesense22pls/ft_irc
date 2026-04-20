@@ -10,6 +10,7 @@ INCS_DIR	= includes
 
 SRCS		= main.cpp \
 			  Server.cpp \
+			  Server_commands.cpp \
 			  Client.cpp \
 			  Utils.cpp
 
