@@ -18,34 +18,32 @@ Server::~Server()
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 		delete it->second;
 	_clients.clear();
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+		delete it->second;
+	_channels.clear();
 	if (_serverSocket != -1)
 		close(_serverSocket);
 }
 
 void Server::init()
 {
-	_serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+	_serverSocket = socket(AF_INET, SOCK_STREAM, 0); // we setup socket server
 	if (_serverSocket < 0)
-		throw std::runtime_error("Failed to create socket");
-
+		throw std::runtime_error("Failed to create server socket");
 	int opt = 1;
-	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) // options in case i stop and relaunch, so the port will be free
 		throw std::runtime_error("Failed to set socket options");
-
-	setNonBlocking(_serverSocket);
-
-	struct sockaddr_in addr;
+	setNonBlocking(_serverSocket); // treat many clieants witouth freeze if client 1 send nothing
+	struct sockaddr_in addr;  // struct whi got the adrees and the port where the serv gonna listen
 	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(_port);
 
-	if (bind(_serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0)
+	if (bind(_serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0) //th socket now listen on this adress and port
 		throw std::runtime_error("Failed to bind socket");
-
 	if (listen(_serverSocket, 10) < 0)
 		throw std::runtime_error("Failed to listen on socket");
-
 	struct pollfd serverPoll;
 	serverPoll.fd = _serverSocket;
 	serverPoll.events = POLLIN;
@@ -125,8 +123,11 @@ void Server::handleClientData(int fd)
 	}
 
 	buffer[bytesRead] = '\0';
-	
-	Client *client = _clients[fd];
+
+	std::map<int, Client*>::iterator it = _clients.find(fd);
+	if (it == _clients.end())
+		return;
+	Client *client = it->second;
 	client->appendBuffer(std::string(buffer));
 
 	std::string clientBuffer = client->getBuffer();
@@ -135,17 +136,28 @@ void Server::handleClientData(int fd)
 	{
 		std::cout << "Received command from fd " << fd << ": " << cmd << std::endl;
 		processCommand(client, cmd);
+		if (_clients.find(fd) == _clients.end())
+			return;
+		client = _clients[fd];
 	}
+	if (_clients.find(fd) == _clients.end())
+		return;
 	client->clearBuffer();
 	client->appendBuffer(clientBuffer);
 }
 
 void Server::removeClient(int fd)
 {
+	removeClientFromChannels(fd);
+
 	close(fd);
-	
-	delete _clients[fd];
-	_clients.erase(fd);
+
+	std::map<int, Client*>::iterator clientIt = _clients.find(fd);
+	if (clientIt != _clients.end())
+	{
+		delete clientIt->second;
+		_clients.erase(clientIt);
+	}
 
 	for (std::vector<struct pollfd>::iterator it = _pollfds.begin(); it != _pollfds.end(); ++it)
 	{
@@ -154,6 +166,26 @@ void Server::removeClient(int fd)
 			_pollfds.erase(it);
 			break;
 		}
+	}
+}
+
+void Server::removeClientFromChannels(int fd)
+{
+	std::vector<std::string> emptyChannels;
+
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
+	{
+		Channel *channel = it->second;
+		if (channel->hasMember(fd))
+			channel->removeMember(fd);
+		if (channel->isEmpty())
+			emptyChannels.push_back(it->first);
+	}
+
+	for (size_t i = 0; i < emptyChannels.size(); ++i)
+	{
+		delete _channels[emptyChannels[i]];
+		_channels.erase(emptyChannels[i]);
 	}
 }
 

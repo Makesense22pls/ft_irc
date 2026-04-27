@@ -11,12 +11,14 @@ INCS_DIR	= includes
 SRCS		= main.cpp \
 			  Server.cpp \
 			  Server_commands.cpp \
+			  Channel.cpp \
 			  Client.cpp \
 			  Utils.cpp
 
 OBJS		= $(addprefix $(OBJS_DIR)/, $(SRCS:.cpp=.o))
 
 HEADERS		= $(INCS_DIR)/Server.hpp \
+			  $(INCS_DIR)/Channel.hpp \
 			  $(INCS_DIR)/Client.hpp \
 			  $(INCS_DIR)/Utils.hpp
 
