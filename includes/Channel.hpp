@@ -13,6 +13,7 @@ private:
 	std::string				_topic;
 	std::map<int, Client*>	_members;
 	std::set<int>			_operators;
+	std::set<int>			_invited;
 
 public:
 	Channel(const std::string &name);
@@ -30,6 +31,10 @@ public:
 	bool isOperator(int fd) const;
 	void addOperator(int fd);
 	void removeOperator(int fd);
+
+	bool isInvited(int fd) const;
+	void addInvitation(int fd);
+	void removeInvitation(int fd);
 
 	const std::map<int, Client*> &getMembers() const;
 };

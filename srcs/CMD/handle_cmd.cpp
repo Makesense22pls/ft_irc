@@ -52,6 +52,8 @@ void Server::processCommand(Client *client, const std::string &command)
 		handleTopic(client, args);
 	else if (cmd == "INVITE")
 		handleInvite(client, args);
+	else if (cmd == "KICK")
+		handleKick(client, args);
 	else if (!client->isRegistered())
 		sendToClient(client->getFd(), "ERROR :You must register first (PASS, NICK, USER)");
 	else
