@@ -2,7 +2,17 @@
 #include <cstdlib>
 #include <cerrno>
 #include <climits>
+#include <csignal>
 #include "Server.hpp"
+
+Server *g_server = NULL;
+
+void signalHandler(int signum)
+{
+	std::cout << "\nInterrupt signal (" << signum << ") received. Stopping server..." << std::endl;
+	if (g_server)
+		g_server->stop();
+}
 
 bool isValidPort(const std::string &portStr, int &port)
 {
@@ -37,9 +47,14 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	std::cout << "Starting IRC Server on port " << port << std::endl;
+	
+	signal(SIGINT, signalHandler);
+	signal(SIGQUIT, signalHandler);
+	
 	try
 	{
 		Server server(port, password);
+		g_server = &server;
 		server.init();
 		server.run();
 	}
@@ -48,5 +63,7 @@ int main(int argc, char **argv)
 		std::cerr << "Error: " << e.what() << std::endl;
 		return (1);
 	}
+	
+	std::cout << "Server closed safely." << std::endl;
 	return (0);
 }

@@ -49,6 +49,7 @@ public:
 
 	void init();
 	void run();
+	void stop();
 	void sendToClient(int fd, const std::string &message);
 };
 

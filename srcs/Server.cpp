@@ -81,6 +81,11 @@ void Server::run()
 	}
 }
 
+void Server::stop()
+{
+	_running = false;
+}
+
 void Server::acceptNewClient()
 {
 	struct sockaddr_in clientAddr;
