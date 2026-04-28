@@ -7,11 +7,11 @@ std::string Server::extractCommand(std::string &buffer)
 {
 	size_t pos = buffer.find("\r\n");
 	if (pos == std::string::npos)
-		return "";
+		return ("");
 	
 	std::string cmd = buffer.substr(0, pos);
 	buffer.erase(0, pos + 2);
-	return cmd;
+	return (cmd);
 }
 
 void Server::processCommand(Client *client, const std::string &command)
@@ -94,11 +94,9 @@ std::vector<std::string> Server::splitCommand(const std::string &command)
 			token += command[i];
 		}
 	}
-
 	if (!token.empty())
 		tokens.push_back(token);
-
-	return tokens;
+	return (tokens);
 }
 
 bool Server::isNicknameInUse(const std::string &nickname)
@@ -106,9 +104,9 @@ bool Server::isNicknameInUse(const std::string &nickname)
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second->getNickname() == nickname)
-			return true;
+			return (true);
 	}
-	return false;
+	return (false);
 }
 
 Client *Server::findClientByNickname(const std::string &nickname)
@@ -116,28 +114,27 @@ Client *Server::findClientByNickname(const std::string &nickname)
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second->getNickname() == nickname)
-			return it->second;
+			return (it->second);
 	}
-	return NULL;
+	return (NULL);
 }
 
 Channel *Server::getChannel(const std::string &name)
 {
 	std::map<std::string, Channel*>::iterator it = _channels.find(name);
 	if (it == _channels.end())
-		return NULL;
-	return it->second;
+		return (NULL);
+	return (it->second);
 }
 
 Channel *Server::getOrCreateChannel(const std::string &name)
 {
 	Channel *channel = getChannel(name);
 	if (channel != NULL)
-		return channel;
-
+		return (channel);
 	channel = new Channel(name);
 	_channels[name] = channel;
-	return channel;
+	return (channel);
 }
 
 void Server::sendToChannel(Channel *channel, const std::string &message, int exceptFd)
@@ -156,6 +153,5 @@ void Server::sendToClient(int fd, const std::string &message)
 	std::string msg = message;
 	if (msg.find("\r\n") == std::string::npos)
 		msg += "\r\n";
-	
 	send(fd, msg.c_str(), msg.length(), 0);
 }

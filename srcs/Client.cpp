@@ -10,37 +10,37 @@ Client::~Client()
 
 int Client::getFd() const
 {
-	return _fd;
+	return (_fd);
 }
 
 std::string Client::getNickname() const
 {
-	return _nickname;
+	return (_nickname);
 }
 
 std::string Client::getUsername() const
 {
-	return _username;
+	return (_username);
 }
 
 std::string Client::getRealname() const
 {
-	return _realname;
+	return (_realname);
 }
 
 std::string Client::getBuffer() const
 {
-	return _buffer;
+	return (_buffer);
 }
 
 bool Client::isAuthenticated() const
 {
-	return _authenticated;
+	return (_authenticated);
 }
 
 bool Client::isRegistered() const
 {
-	return _registered;
+	return (_registered);
 }
 
 void Client::setNickname(const std::string &nickname)

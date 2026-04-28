@@ -7,11 +7,11 @@ std::string Server::extractCommand(std::string &buffer)
 {
 	size_t pos = buffer.find("\r\n");
 	if (pos == std::string::npos)
-		return "";
+		return ("");
 	
 	std::string cmd = buffer.substr(0, pos);
 	buffer.erase(0, pos + 2);
-	return cmd;
+	return (cmd);
 }
 
 void Server::processCommand(Client *client, const std::string &command)
@@ -54,8 +54,10 @@ void Server::processCommand(Client *client, const std::string &command)
 		handleInvite(client, args);
 	else if (cmd == "KICK")
 		handleKick(client, args);
+	else if (cmd == "MODE")
+		handleMode(client, args);
 	else if (!client->isRegistered())
-		sendToClient(client->getFd(), "ERROR :You must register first (PASS, NICK, USER)");
+		sendToClient(client->getFd(), "ERROR :You must register first (PASSWORD, NICKNAME, USER)");
 	else
 		sendToClient(client->getFd(), "421 " + client->getNickname() + " " + cmd + " :Unknown command");
 }
@@ -100,7 +102,7 @@ std::vector<std::string> Server::splitCommand(const std::string &command)
 	if (!token.empty())
 		tokens.push_back(token);
 
-	return tokens;
+	return (tokens);
 }
 
 bool Server::isNicknameInUse(const std::string &nickname)
@@ -108,9 +110,9 @@ bool Server::isNicknameInUse(const std::string &nickname)
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second->getNickname() == nickname)
-			return true;
+			return (true);
 	}
-	return false;
+	return (false);
 }
 
 Client *Server::findClientByNickname(const std::string &nickname)
@@ -118,16 +120,16 @@ Client *Server::findClientByNickname(const std::string &nickname)
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
 	{
 		if (it->second->getNickname() == nickname)
-			return it->second;
+			return (it->second);
 	}
-	return NULL;
+	return (NULL);
 }
 
 Channel *Server::getChannel(const std::string &name)
 {
 	std::map<std::string, Channel*>::iterator it = _channels.find(name);
 	if (it == _channels.end())
-		return NULL;
+		return (NULL);
 	return it->second;
 }
 
@@ -135,11 +137,11 @@ Channel *Server::getOrCreateChannel(const std::string &name)
 {
 	Channel *channel = getChannel(name);
 	if (channel != NULL)
-		return channel;
+		return (channel);
 
 	channel = new Channel(name);
 	_channels[name] = channel;
-	return channel;
+	return (channel);
 }
 
 void Server::sendToChannel(Channel *channel, const std::string &message, int exceptFd)

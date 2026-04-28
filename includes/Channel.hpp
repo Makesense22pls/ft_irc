@@ -14,6 +14,10 @@ private:
 	std::map<int, Client*>	_members;
 	std::set<int>			_operators;
 	std::set<int>			_invited;
+	bool					_inviteOnly;
+	std::string				_key;
+	bool					_topicOnlyByOp;
+	int						_limit;
 
 public:
 	Channel(const std::string &name);
@@ -35,6 +39,15 @@ public:
 	bool isInvited(int fd) const;
 	void addInvitation(int fd);
 	void removeInvitation(int fd);
+
+	bool isInviteOnly() const;
+	void setInviteOnly(bool b);
+	const std::string &getKey() const;
+	void setKey(const std::string &key);
+	bool isTopicOnlyByOp() const;
+	void setTopicOnlyByOp(bool b);
+	int getLimit() const;
+	void setLimit(int limit);
 
 	const std::map<int, Client*> &getMembers() const;
 };

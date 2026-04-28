@@ -56,18 +56,15 @@ void Server::init()
 void Server::run()
 {
 	_running = true;
-	
 	while (_running)
 	{
 		int pollCount = poll(&_pollfds[0], _pollfds.size(), -1);
-		
 		if (pollCount < 0)
 		{
 			if (errno == EINTR)
 				continue;
 			throw std::runtime_error("Poll failed");
 		}
-
 		for (size_t i = 0; i < _pollfds.size(); ++i)
 		{
 			if (_pollfds[i].revents & POLLIN)
@@ -85,25 +82,20 @@ void Server::acceptNewClient()
 {
 	struct sockaddr_in clientAddr;
 	socklen_t clientLen = sizeof(clientAddr);
-	
 	int clientFd = accept(_serverSocket, (struct sockaddr*)&clientAddr, &clientLen);
 	if (clientFd < 0)
 	{
 		std::cerr << "Failed to accept client" << std::endl;
 		return;
 	}
-
 	setNonBlocking(clientFd);
-
 	Client *newClient = new Client(clientFd);
 	_clients[clientFd] = newClient;
-
 	struct pollfd clientPoll;
 	clientPoll.fd = clientFd;
 	clientPoll.events = POLLIN;
 	clientPoll.revents = 0;
 	_pollfds.push_back(clientPoll);
-
 	std::cout << "New client connected: fd " << clientFd << std::endl;
 }
 
@@ -111,7 +103,6 @@ void Server::handleClientData(int fd)
 {
 	char buffer[512];
 	int bytesRead = recv(fd, buffer, sizeof(buffer) - 1, 0);
-
 	if (bytesRead <= 0)
 	{
 		if (bytesRead == 0)
@@ -121,15 +112,12 @@ void Server::handleClientData(int fd)
 		removeClient(fd);
 		return;
 	}
-
 	buffer[bytesRead] = '\0';
-
 	std::map<int, Client*>::iterator it = _clients.find(fd);
 	if (it == _clients.end())
 		return;
 	Client *client = it->second;
 	client->appendBuffer(std::string(buffer));
-
 	std::string clientBuffer = client->getBuffer();
 	std::string cmd;
 	while (!(cmd = extractCommand(clientBuffer)).empty())
@@ -149,16 +137,13 @@ void Server::handleClientData(int fd)
 void Server::removeClient(int fd)
 {
 	removeClientFromChannels(fd);
-
 	close(fd);
-
 	std::map<int, Client*>::iterator clientIt = _clients.find(fd);
 	if (clientIt != _clients.end())
 	{
 		delete clientIt->second;
 		_clients.erase(clientIt);
 	}
-
 	for (std::vector<struct pollfd>::iterator it = _pollfds.begin(); it != _pollfds.end(); ++it)
 	{
 		if (it->fd == fd)
@@ -181,7 +166,6 @@ void Server::removeClientFromChannels(int fd)
 		if (channel->isEmpty())
 			emptyChannels.push_back(it->first);
 	}
-
 	for (size_t i = 0; i < emptyChannels.size(); ++i)
 	{
 		delete _channels[emptyChannels[i]];
@@ -191,9 +175,6 @@ void Server::removeClientFromChannels(int fd)
 
 void Server::setNonBlocking(int fd)
 {
-	int flags = fcntl(fd, F_GETFL, 0);
-	if (flags < 0)
-		throw std::runtime_error("Failed to get socket flags");
-	if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) < 0)
+	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
 		throw std::runtime_error("Failed to set non-blocking mode");
 }

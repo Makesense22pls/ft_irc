@@ -12,7 +12,6 @@ void Server::handleQuit(Client *client, const std::string &args)
 		else
 			quitMsg = args;
 	}
-
 	std::cout << "Client fd " << client->getFd() << " quit: " << quitMsg << std::endl;
 	sendToClient(client->getFd(), "ERROR :Closing connection");
 	removeClient(client->getFd());

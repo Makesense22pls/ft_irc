@@ -22,6 +22,7 @@ SRCS		= main.cpp \
 			  CMD/topic.cpp \
 			  CMD/invite.cpp \
 			  CMD/kick.cpp \
+			  CMD/mode.cpp \
 			  Channel.cpp \
 			  Client.cpp \
 			  Utils.cpp

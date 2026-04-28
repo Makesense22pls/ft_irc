@@ -37,6 +37,7 @@ private:
 	void handleTopic(Client *client, const std::string &args);
 	void handleInvite(Client *client, const std::string &args);
 	void handleKick(Client *client, const std::string &args);
+	void handleMode(Client *client, const std::string &args);
 	
 	std::vector<std::string> splitCommand(const std::string &command);
 	bool isNicknameInUse(const std::string &nickname);

@@ -1,6 +1,6 @@
 #include "Channel.hpp"
 
-Channel::Channel(const std::string &name) : _name(name)
+Channel::Channel(const std::string &name) : _name(name), _inviteOnly(false), _key(""), _topicOnlyByOp(false), _limit(0)
 {
 }
 
@@ -62,7 +62,7 @@ void Channel::removeOperator(int fd)
 
 bool Channel::isInvited(int fd) const
 {
-	return _invited.find(fd) != _invited.end();
+	return (_invited.find(fd) != _invited.end());
 }
 
 void Channel::addInvitation(int fd)
@@ -78,4 +78,44 @@ void Channel::removeInvitation(int fd)
 const std::map<int, Client*> &Channel::getMembers() const
 {
 	return (_members);
+}
+
+bool Channel::isInviteOnly() const
+{
+	return (_inviteOnly);
+}
+
+void Channel::setInviteOnly(bool b)
+{
+	_inviteOnly = b;
+}
+
+const std::string &Channel::getKey() const
+{
+	return (_key);
+}
+
+void Channel::setKey(const std::string &key)
+{
+	_key = key;
+}
+
+bool Channel::isTopicOnlyByOp() const
+{
+	return (_topicOnlyByOp);
+}
+
+void Channel::setTopicOnlyByOp(bool b)
+{
+	_topicOnlyByOp = b;
+}
+
+int Channel::getLimit() const
+{
+	return (_limit);
+}
+
+void Channel::setLimit(int limit)
+{
+	_limit = limit;
 }
