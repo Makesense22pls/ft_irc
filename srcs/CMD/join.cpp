@@ -33,14 +33,14 @@ void Server::handleJoin(Client *client, const std::string &args)
 	if (channel->hasMember(client->getFd()))
 		return;
 
-	// Check invite-only mode
+	
 	if (channel->isInviteOnly() && !channel->isInvited(client->getFd()))
 	{
 		sendToClient(client->getFd(), "473 " + channelName + " :Cannot join channel (invite only)");
 		return;
 	}
 
-	// Check key mode
+	
 	if (!channel->getKey().empty())
 	{
 		size_t spacePos = args.find(' ');

@@ -27,20 +27,20 @@ Server::~Server()
 
 void Server::init()
 {
-	_serverSocket = socket(AF_INET, SOCK_STREAM, 0); // we setup socket server
+	_serverSocket = socket(AF_INET, SOCK_STREAM, 0); 
 	if (_serverSocket < 0)
 		throw std::runtime_error("Failed to create server socket");
 	int opt = 1;
-	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) // options in case i stop and relaunch, so the port will be free
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) 
 		throw std::runtime_error("Failed to set socket options");
-	setNonBlocking(_serverSocket); // treat many clieants witouth freeze if client 1 send nothing
-	struct sockaddr_in addr;  // struct whi got the adrees and the port where the serv gonna listen
+	setNonBlocking(_serverSocket); 
+	struct sockaddr_in addr;  
 	std::memset(&addr, 0, sizeof(addr));
 	addr.sin_family = AF_INET;
 	addr.sin_addr.s_addr = INADDR_ANY;
 	addr.sin_port = htons(_port);
 
-	if (bind(_serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0) //th socket now listen on this adress and port
+	if (bind(_serverSocket, (struct sockaddr*)&addr, sizeof(addr)) < 0) 
 		throw std::runtime_error("Failed to bind socket");
 	if (listen(_serverSocket, 10) < 0)
 		throw std::runtime_error("Failed to listen on socket");

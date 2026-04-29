@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Server.hpp"
 
 void Server::handleMode(Client *client, const std::string &args)
@@ -34,7 +35,7 @@ void Server::handleMode(Client *client, const std::string &args)
 		return;
 	}
 
-	// Query mode if no mode specified
+	
 	if (modeStr.empty())
 	{
 		std::string modes;
