@@ -52,8 +52,12 @@ void Server::processCommand(Client *client, const std::string &command)
 		handleTopic(client, args);
 	else if (cmd == "INVITE")
 		handleInvite(client, args);
+	else if (cmd == "KICK")
+		handleKick(client, args);
+	else if (cmd == "MODE")
+		handleMode(client, args);
 	else if (!client->isRegistered())
-		sendToClient(client->getFd(), "ERROR :You must register first (PASS, NICK, USER)");
+		sendToClient(client->getFd(), "ERROR :You must register first (PASSWORD, NICKNAME, USER)");
 	else
 		sendToClient(client->getFd(), "421 " + client->getNickname() + " " + cmd + " :Unknown command");
 }
@@ -94,8 +98,10 @@ std::vector<std::string> Server::splitCommand(const std::string &command)
 			token += command[i];
 		}
 	}
+
 	if (!token.empty())
 		tokens.push_back(token);
+
 	return (tokens);
 }
 
@@ -124,7 +130,7 @@ Channel *Server::getChannel(const std::string &name)
 	std::map<std::string, Channel*>::iterator it = _channels.find(name);
 	if (it == _channels.end())
 		return (NULL);
-	return (it->second);
+	return it->second;
 }
 
 Channel *Server::getOrCreateChannel(const std::string &name)
@@ -132,6 +138,7 @@ Channel *Server::getOrCreateChannel(const std::string &name)
 	Channel *channel = getChannel(name);
 	if (channel != NULL)
 		return (channel);
+
 	channel = new Channel(name);
 	_channels[name] = channel;
 	return (channel);
@@ -153,5 +160,6 @@ void Server::sendToClient(int fd, const std::string &message)
 	std::string msg = message;
 	if (msg.find("\r\n") == std::string::npos)
 		msg += "\r\n";
+	
 	send(fd, msg.c_str(), msg.length(), 0);
 }

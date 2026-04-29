@@ -10,7 +10,19 @@ INCS_DIR	= includes
 
 SRCS		= main.cpp \
 			  Server.cpp \
-			  Server_commands.cpp \
+			  CMD/handle_cmd.cpp \
+			  CMD/password.cpp \
+			  CMD/nickname.cpp \
+			  CMD/user.cpp \
+			  CMD/ping.cpp \
+			  CMD/quit.cpp \
+			  CMD/join.cpp \
+			  CMD/part.cpp \
+			  CMD/private_msg.cpp \
+			  CMD/topic.cpp \
+			  CMD/invite.cpp \
+			  CMD/kick.cpp \
+			  CMD/mode.cpp \
 			  Channel.cpp \
 			  Client.cpp \
 			  Utils.cpp
@@ -28,7 +40,7 @@ $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
 
 $(OBJS_DIR)/%.o: $(SRCS_DIR)/%.cpp $(HEADERS)
-	@mkdir -p $(OBJS_DIR)
+	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -I$(INCS_DIR) -c $< -o $@
 
 clean:
