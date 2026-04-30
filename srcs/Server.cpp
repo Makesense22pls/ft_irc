@@ -16,7 +16,10 @@ Server::Server(int port, const std::string &password)
 Server::~Server()
 {
 	for (std::map<int, Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it)
+	{
+		close(it->first);
 		delete it->second;
+	}
 	_clients.clear();
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it)
 		delete it->second;
