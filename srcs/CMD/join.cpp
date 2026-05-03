@@ -36,7 +36,7 @@ void Server::handleJoin(Client *client, const std::string &args)
 	
 	if (channel->isInviteOnly() && !channel->isInvited(client->getFd()))
 	{
-		sendToClient(client->getFd(), "473 " + channelName + " :Cannot join channel (invite only)");
+		sendToClient(client->getFd(), "473 " + channelName + " :Cannot join channel (+i)");
 		return;
 	}
 
@@ -49,13 +49,13 @@ void Server::handleJoin(Client *client, const std::string &args)
 			key = args.substr(spacePos + 1);
 		if (key != channel->getKey())
 		{
-			sendToClient(client->getFd(), "475 " + channelName + " :Cannot join channel (incorrect key)");
+			sendToClient(client->getFd(), "475 " + channelName + " :Cannot join channel (+k)");
 			return;
 		}
 	}
 	if (channel->getLimit() > 0 && (int)channel->getMembers().size() >= channel->getLimit())
 	{
-		sendToClient(client->getFd(), "471 " + channelName + " :Cannot join channel (channel is full)");
+		sendToClient(client->getFd(), "471 " + channelName + " :Cannot join channel (+l)");
 		return;
 	}
 

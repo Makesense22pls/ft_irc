@@ -27,6 +27,12 @@ void Server::handleNick(Client *client, const std::string &args)
 	if (!client->getUsername().empty() && !client->isRegistered())
 	{
 		client->setRegistered(true);
-		sendToClient(client->getFd(), "001 " + nickname + " :Welcome to the IRC Network");
+		std::string nick = client->getNickname();
+		std::string user = client->getUsername();
+		std::string host = "127.0.0.1";
+		sendToClient(client->getFd(), "001 " + nick + " :Welcome to the Internet Relay Network " + nick + "!" + user + "@" + host);
+		sendToClient(client->getFd(), "002 " + nick + " :Your host is ircserv, running version 1.0");
+		sendToClient(client->getFd(), "003 " + nick + " :This server was created today");
+		sendToClient(client->getFd(), "004 " + nick + " ircserv 1.0 - itkol");
 	}
 }

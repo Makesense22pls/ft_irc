@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <sys/socket.h>
+#include <cctype>
 
 std::string Server::extractCommand(std::string &buffer)
 {
@@ -52,6 +53,8 @@ void Server::processCommand(Client *client, const std::string &command)
 		handleTopic(client, args);
 	else if (cmd == "INVITE")
 		handleInvite(client, args);
+	else if (cmd == "CAP")
+		return;
 	else if (!client->isRegistered())
 		sendToClient(client->getFd(), "ERROR :You must register first (PASS, NICK, USER)");
 	else
@@ -151,6 +154,34 @@ void Server::sendToChannel(Channel *channel, const std::string &message, int exc
 void Server::sendToClient(int fd, const std::string &message)
 {
 	std::string msg = message;
+
+	if (msg.length() >= 3 && std::isdigit(msg[0]) && std::isdigit(msg[1]) && std::isdigit(msg[2]))
+	{
+		std::map<int, Client*>::iterator it = _clients.find(fd);
+		std::string target = "*";
+		if (it != _clients.end() && !it->second->getNickname().empty())
+			target = it->second->getNickname();
+
+		std::string code = msg.substr(0, 3);
+		std::string rest = msg.substr(3);
+
+		size_t firstNonSpace = rest.find_first_not_of(" ");
+		if (firstNonSpace != std::string::npos)
+		{
+			size_t spaceOrColon = rest.find_first_of(" :", firstNonSpace);
+			std::string firstWord = rest.substr(firstNonSpace, spaceOrColon - firstNonSpace);
+			
+			if (firstWord != target && firstWord != "*")
+				msg = ":ircserv " + code + " " + target + rest;
+			else
+				msg = ":ircserv " + msg;
+		}
+		else
+		{
+			msg = ":ircserv " + code + " " + target + rest;
+		}
+	}
+
 	if (msg.find("\r\n") == std::string::npos)
 		msg += "\r\n";
 	send(fd, msg.c_str(), msg.length(), 0);

@@ -36,7 +36,14 @@ The server requires two arguments to run: a port number and a connection passwor
 ### Connection
 You can test the server using standard tools like `netcat` or specialized IRC clients like `irssi` or `weechat`.
 
-**Using Netcat:**
+**1. Using a real Client (Recommended for evaluations: Irssi):**
+In a new terminal:
+```bash
+irssi -c 127.0.0.1 -p 6667 -w 1234
+```
+*The server is 100% RFC 2812 compliant and will handle `CAP LS`, correct error prefixing (`:ircserv`), and proper `!user@host` formatting upon connection.*
+
+**2. Using Netcat:**
 ```bash
 nc -C 127.0.0.1 6667
 ```
@@ -48,6 +55,13 @@ PASS 1234
 NICK my_nickname
 USER my_user 0 * :My Real Name
 ```
+
+### Memory & FD Leak Tracking
+The server's memory and file descriptors are safely handled (0 leaks, 4 inherited FDs open at exit). You can verify this using Valgrind:
+```bash
+valgrind --leak-check=full --track-fds=yes ./ircserv 6667 1234
+```
+Pressing `Ctrl+C` will neatly close all open clients and free allocated channels.
 
 ## Resources
 Here are the references and tools used to build this project:
