@@ -63,6 +63,37 @@ valgrind --leak-check=full --track-fds=yes ./ircserv 6667 1234
 ```
 Pressing `Ctrl+C` will neatly close all open clients and free allocated channels.
 
+### How to test Channel Operator Commands
+During the evaluation, you will need to prove that channel operators have specific privileges (`KICK`, `INVITE`, `TOPIC`, `MODE`). Here is a quick cheat sheet to test all of these easily using two `irssi` clients.
+
+**1. Setup 2 users:**
+- Terminal 1: `irssi -c 127.0.0.1 -p 6667 -w 1234 -n admin`
+- Terminal 2: `irssi -c 127.0.0.1 -p 6667 -w 1234 -n user1`
+- In both terminals, join the same channel: `/join #test` *(admin becomes Operator automatically as the creator)*.
+
+**2. Test TOPIC and MODE `+t` (Restrict Topic):**
+- **Admin**: `/topic #test Welcome to my channel!`
+- **Admin**: `/mode #test +t` *(Restricts topic changes to Operators)*
+- **User1**: `/topic #test Hacked!` ➡️ *Fails: 482 You're not channel operator.*
+
+**3. Test MODE `+k` (Password):**
+- **Admin**: `/mode #test +k mykey`
+- **User1**: `/part #test` then `/join #test` ➡️ *Fails: 475 Cannot join channel (+k).*
+- **User1**: `/join #test mykey` ➡️ *Succeeds!*
+
+**4. Test KICK:**
+- **Admin**: `/kick user1 Get out!` ➡️ *User1 is violently ejected from `#test`.*
+
+**5. Test MODE `+i` (Invite Only) & INVITE:**
+- **Admin**: `/mode #test +i`
+- **User1**: `/join #test` ➡️ *Fails: 473 Cannot join channel (+i).*
+- **Admin**: `/invite user1 #test` 
+- **User1**: `/join #test` ➡️ *Succeeds!*
+
+**6. Test MODE `+o` (Promote Operator) & MODE `+l` (Limit):**
+- **Admin**: `/mode #test +o user1` *(User1 is now an Operator)*
+- **Admin**: `/mode #test +l 2` *(Limits the channel to 2 users max)*
+
 ## Resources
 Here are the references and tools used to build this project:
 - [RFC 2812 - Internet Relay Chat: Client Protocol](https://datatracker.ietf.org/doc/html/rfc2812): The absolute reference for IRC rules and syntaxes.
