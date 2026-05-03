@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 	
 	signal(SIGINT, signalHandler);
 	signal(SIGQUIT, signalHandler);
+	signal(SIGPIPE, SIG_IGN);
 	
 	try
 	{
