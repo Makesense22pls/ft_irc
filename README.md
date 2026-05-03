@@ -39,7 +39,7 @@ You can test the server using standard tools like `netcat` or specialized IRC cl
 **1. Using a real Client (Recommended for evaluations: Irssi):**
 In a new terminal:
 ```bash
-irssi -c 127.0.0.1 -p 6667 -w 1234
+irssi -c 127.0.0.1 -p 6667 -w 1234 -n my_nickname
 ```
 *The server is 100% RFC 2812 compliant and will handle `CAP LS`, correct error prefixing (`:ircserv`), and proper `!user@host` formatting upon connection.*
 
